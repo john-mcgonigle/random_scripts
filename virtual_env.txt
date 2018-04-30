@@ -1,0 +1,8 @@
+sudo apt-get update
+pip install virtualenv
+virtualenv [ENVIRNOMENT_NAME] --python = python3
+pip install numpy
+pip install scipy
+pip install pandas
+pip install jupyter
+

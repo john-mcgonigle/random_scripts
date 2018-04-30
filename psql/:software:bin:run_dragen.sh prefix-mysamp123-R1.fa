@@ -1,0 +1,1 @@
+/software/bin/run_dragen.sh prefix-mysamp123-R1.fastq.gz prefix-mysamp123-R2.fastq.gz mysamp123 FEMALE

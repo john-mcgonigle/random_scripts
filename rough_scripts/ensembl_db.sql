@@ -1,0 +1,2 @@
+mysql --host=ensembldb.ensembl.org --user=anonymous --port=3337 --database=homo_sapiens_core_81_37 < ensembl_gene_query.sql 
+mysql --host=ensembldb.ensembl.org --user=anonymous --port=3337 --database=homo_sapiens_core_81_37 < ensembl_gene_query.sql | tr '\t' ',' > ensemble_gene_defintions.csv

@@ -1,0 +1,1 @@
+print "$_\n" for keys(%$current_panel);

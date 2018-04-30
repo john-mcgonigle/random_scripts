@@ -1,0 +1,70 @@
+version: "2"
+
+services:
+  # Database container
+  db:
+    image: postgres:9.6
+    environment:
+      TERM: xterm
+      POSTGRES_PASSWORD: 1q2w3e
+    volumes:
+      # Mount the postgres data directory as a volume for persistence
+      - /tmp/sapientia_db:/var/lib/postgresql/data
+    networks:
+      - net
+
+  # Test database container
+  testdb:
+    image: postgres:9.6
+    environment:
+      TERM: xterm
+      POSTGRES_PASSWORD: 4r5t6y
+    networks:
+      - net
+
+  # Web application container
+  web:
+    image: congenica/sapientia:1.6.8
+    environment:
+      TERM: xterm
+      DANCER_ENVIRONMENT: development
+
+      DBIC_TRACE: 1
+      DBIC_TRACE_PROFILE: console
+
+      SAPIENTIA_DB_HOST: db
+      SAPIENTIA_DB_USER: postgres
+      SAPIENTIA_DB_PASSWORD: 1q2w3e
+      SAPIENTIA_DB_NAME: sapientia
+
+      SAPIENTIA_TEST_DB_HOST: testdb
+      SAPIENTIA_TEST_DB_USER: postgres
+      SAPIENTIA_TEST_DB_PASSWORD: 4r5t6y
+      SAPIENTIA_TEST_DB_ADMIN_NAME: postgres
+      SAPIENTIA_TEST_DB_ADMIN_USER: postgres
+      SAPIENTIA_TEST_DB_ADMIN_PASSWORD: 4r5t6y
+
+      SAPIENTIA_TEST_SELENIUM_HOST: selenium
+      SAPIENTIA_TEST_SELENIUM_PORT: 4444
+
+    ports:
+      - 8000:8000
+      - 8080:8080
+      - 3000:3000
+      - 3001:3001
+    volumes:
+      - ../..:/app
+    command: -r -R lib,environments,config.yml
+    networks:
+      - net
+
+  selenium:
+    image: vvoyer/docker-selenium-firefox-chrome
+    ports:
+      - 4444:4444
+    networks:
+      - net
+
+networks:
+  net:
+    driver: bridge

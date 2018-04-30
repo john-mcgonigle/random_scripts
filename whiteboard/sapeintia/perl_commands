@@ -1,0 +1,3 @@
+
+# Prove is the testing framework for perl, -v = verbose, -I = include this folder in the perl5 lib, so add the sapientia specific stuff
+prove -v -I lib -I t/lib -I ext-lib -I pipeline/sapientia-task/lib [point to file/folder you want to test]
