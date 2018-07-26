@@ -1,0 +1,23 @@
+# Commands
+ scp -i .ssh/colt.pem [INSERT_FILE_HERE]  colt@80.169.12.164:{PATH_TO_GO_TO}
+
+ scp -i ~/.ssh/colt.pem colt@80.169.12.164:~/shoulders.pem.nc .
+
+ scp -i ~/.ssh/colt.pem /mnt/c/work_dir/sapientia-web/pipeline/ngps/create_patient_data/genotype_methods/*.py colt@80.169.12.164:/scratch/data/con-jem/scripts/NGPS/genotype_methods/
+
+ scp -i ~/.ssh/colt.pem colt@80.169.12.164:/scratch/data/con-jem/dbSNP_SOD1.vcf .
+
+ rename 's/string_to_replace/replace_with/g' *
+
+ rename 's/phase_cohort/phase3_cohort/g' *
+
+ rename 's/HG00240a_HG00240b/singleton_person2_/g' *
+
+rename 's/b.txt/b_infected.txt/g' *
+
+
+# This command replaces any empty fields with '.'
+awk 'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) if($i ~ /^ *$/) $i = "." }; 1' SOD1_curated_variant_list.vcf
+
+awk 'BEGIN { FS = OFS = "\t" } { for(i=1; i<=NF; i++) \
+if($i ~ /=/) gsub("=",  "=\"") }; 1' SOD1_curated_variant_list.vcf

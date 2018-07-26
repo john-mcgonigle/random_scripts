@@ -7,7 +7,7 @@ python /efs/jmcg/scripts/benchmark.py VEP --input-vcf /scratch/personal/jbk/grch
  --output-file /scratch/personal/jmcgonigle/random_work/vep/GRCh38_vep90_cache90.vcf \
  --no-progress True \
  --no-stats True \
- --use-given-ref False 
+ --use-given-
 
 
  python /efs/jmcg/scripts/benchmark.py VEP --input-vcf /scratch/personal/jbk/grch38_patient/child1_chr21.vcf \

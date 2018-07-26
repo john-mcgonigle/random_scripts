@@ -1,0 +1,136 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+alias pyver='python -c '"'"'import sys; print(''"''.''"''.join(map(str, sys.version_info[:3])))'"'"''
+alias ipy="python -c 'import IPython; IPython.terminal.ipapp.launch_new_instance()'"
+alias sapweb='deactivate && source ~/SapWeb/bin/activate && cd /scratch/personal/jmcgonigle/sapientia-web/ && pyver'
+alias sapcli='deactivate && source ~/SapCli/bin/activate && cd /scratch/personal/jmcgonigle/sapientia-client/ && pyver'
+alias repo=' cd /scratch/personal/jmcgonigle/sapientia-web'
+alias add=' git add '
+alias st=' git status'
+alias co='git co -m '
+alias gdev='git co dev'
+alias rebase='git pull --rebase'
+alias commit=' git commit -m '
+alias prev=' git commit --amend'
+alias sq=" git commit -m 'squash'"
+alias ls="ls -G"
+alias l='ls -Fhtlr'
+alias lsj=' ls -lhra'
+alias szj='du -ha'
+alias sztot='du -hs'
+alias les=' less -S'
+alias tma=' tmux attach -t '
+alias tmls=' tmux ls '
+alias bsubmit='deactivate && cd ~/scripts/bsubs/'
+alias tmn=' tmux new -s '
+alias tmk=' tmux kill-session -t '
+alias staging='PGPASSWORD=Orange18a psql -h staging-db.sapientia.co.uk -U postgres sapientia '
+alias grch38='PGPASSWORD=somesecret psql -h 10.10.1.65 -U postgres sapientia_grch38 '
+alias dbread='PGPASSWORD=tatws63cabets psql -h staging-db.sapientia.co.uk -U readonly sapientia'
+alias dkr='docker run -v /scratch:/scratch -v ~/sapientia-web:/app --rm -t -i 144563655722.dkr.ecr.eu-west-1.amazonaws.com/congenica/pipeline:latest'
+alias ts='docker run --rm -ti -v $DANCER_APPDIR:/app -e DANCER_APPDIR=$DANCER_APPDIR -e DANCER_ENVIRONMENT=staging -v /scratch/data:/data -v /scratch/projects:/scratch/projects -v /scratch/personal:/scratch/personal -v /efs:/efs --entrypoint /bin/bash congenica/pipeline:latest'
+
+# User specific environment and startup programs
+
+function pipeline () {
+    if [ -z $1 ]; then
+        echo "usage: pipeline <ENVIRONMENT>"
+    fi
+
+    env_vars=$(python ~/sapientia-web/bin/sapientia_config.py docker $1)
+    status=$?
+
+    if [ $status -ne 0 ]; then
+        echo "error getting config"
+        return
+    fi
+
+    docker run --rm -ti -v /scratch/personal/jmcgonigle/sapientia-web:/app -e DANCER_ENVIRONMENT=development $env_vars -v /scratch:/scratch --entrypoint /bin/bash -v /efs:/efs congenica/pipeline:latest
+}
+
+function custom_dock () {
+    if [ -z $1 ]; then
+        echo "usage: pipeline <ENVIRONMENT> <DOCKER_IMAGE>"
+    fi
+
+    env_vars=$(python ~/sapientia-web/bin/sapientia_config.py docker $1)
+    status=$?
+    docker_image = $2
+    if [ $status -ne 0 ]; then
+        echo "error getting config"
+        return
+    fi
+
+    docker run --rm -ti -v /scratch/personal/jmcgonigle/sapientia-web:/app -e DANCER_ENVIRONMENT=development $env_vars -v /scratch:/scratch --entrypoint /bin/bash -v /efs:/efs $docker_image 
+}
+
+
+function testsuite () {
+  if [ -z $1 ]; then
+      echo "usage: testsuite <YAML> <work_dir>"
+  fi
+  yaml_path=$1
+  work_dir=$2
+  sapweb
+
+  export DANCER_APPDIR=/scratch/personal/jmcgonigle/sapientia-web
+
+  ./pipeline/testsuite/test_pipelines \
+  --config $yaml_path \
+  --workdir $work_dir
+}
+
+
+function cdmod()
+ {
+     function cdscr()
+     { 
+       scripts_dir=$(echo "cd ${HOME}/scripts/")
+       $scripts_dir
+       ls -lh
+     }
+     function cddat()
+     { 
+       exe_dir=$(echo "cd ${HOME}/workspace")
+       $exe_dir
+       ls -lh
+     }
+
+     function cdsap()
+     { 
+       working_dir=$(echo "cd ${HOME}/sapientia-web")
+       $working_dir
+       ls -lh
+     }
+
+     function cdst()
+     { 
+       out_dir=$(echo "cd /scratch/personal/jmcgonigle/")
+       $out_dir
+       ls -lh
+     }
+
+    function cdts()
+     { 
+       out_dir=$(echo "cd /scratch/personal/jmcgonigle/testsuite/work_dir/")
+       $out_dir
+       ls -lh
+     }
+
+     function cdtun()
+     { 
+       seq_dir=$(echo "cd ${HOME}/.ssh")
+       $seq_dir
+       ls -lh
+     }
+ }
+cdmod
+
+source ~/.git-completion.bash
+source ~/BaseDev/bin/activate
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+export PATH
